@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babuska</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+
+        img {
+            max-width: 100%;
+        }
+
+        section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-gap: 5px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        article {
+            padding: 10px;
+        }
+
+        h1,
+        nav {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+        }
+
+        button {
+            padding: 15px 15px;
+            margin: 3px;
+            border: none;
+            text-align: center;
+
+        }
+
+        .button_active {
+            background-color: black;
+            color: white;
+        }
+
+        /*
+        h1 {
+            text-align: center;
+        }
+*/
+    </style>
+</head>
+
+
+<body>
+
+    <h1>Alle</h1>
+    <header>
+        <nav>
+            <button class="filter button_active" data-kategori="alle">Alle</button>
+            <button class="filter" data-kategori="forretter">Forretter</button>
+            <button class="filter" data-kategori="hovedretter">Hovedretter</button>
+            <button class="filter" data-kategori="desserter">Desserter</button>
+            <button class="filter" data-kategori="drikkevarer">Desserter</button>
+            <button class="filter" data-kategori="sideorders">Sideorders</button>
+        </nav>
+    </header>
+
+    <section class="data_con"></section>
+    <template>
+        <article id="retter">
+            <h2></h2>
+            <img src="" alt="">
+            <p class="navn"></p>
+            <p class="kort"></p>
+            <p class="pris"></p>
+
+        </article>
+    </template>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", start);
+
+        let retter = [];
+        let filter = "alle";
+
+        const data_con = document.querySelector(".data_con");
+
+        const endPoint = ("https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json");
+
+        function start() {
+            loadData();
+
+            addEventListenersToButtons();
+        }
+
+        async function loadData() {
+            const response = await fetch(endPoint);
+            retter = await response.json();
+            console.log(response);
+
+            visRetter();
+
+
+        }
+
+        function visRetter() {
+            data_con.innerHTML = "";
+
+
+            const retTemplate = document.querySelector("template");
+
+            retter.feed.entry.forEach(ret => {
+                if (filter == "alle" || filter == ret.gsx$kategori.$t) {
+                    const klon = retTemplate.cloneNode(true).content;
+
+                    //                    let klon = personTemplate.cloneNode(true).content;
+
+                    klon.querySelector("h2").textContent = `${ret.gsx$navn.$t}`;
+                    klon.querySelector(".kort").textContent = `${ret.gsx$kort.$t}`;
+                    klon.querySelector(".pris").textContent = `${ret.gsx$pris.$t},-`;
+                    klon.querySelector("img").src = `${ret.gsx$billede.$t}`;
+
+
+                    data_con.appendChild(klon);
+
+                }
+            })
+        }
+
+        function addEventListenersToButtons() {
+            document.querySelectorAll(".filter").forEach(elm => {
+                elm.addEventListener("click", filtrering);
+            })
+
+        }
+
+
+        function filtrering() {
+            console.log("FITLER");
+            document.querySelectorAll(".filter").forEach(elm => {
+                elm.classList.remove("button_active");
+            })
+            filter = this.dataset.kategori;
+            visRetter();
+
+            this.classList.add("button_active");
+
+            document.querySelector("h1").textContent = this.textContent;
+        }
+    </script>
+</body></html>
