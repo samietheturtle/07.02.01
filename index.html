@@ -5,23 +5,38 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Babushka</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            top: 0;
         }
 
+
+        .banner_img {
+            width: 100%;
+            height: 200px;
+            background-image: url(imgs/large/borsjtj.jpg);
+            background-size: cover;
+
+        }
+
+        .banner_txt {
+            text-align: center;
+            color: white;
+            font-weight: thin;
+            margin: 0 auto;
+        }
+
+        .banner_txt h1 {
+            margin: 0 auto;
+        }
 
         img {
             max-width: 100%;
-        }
-
-        section {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            grid-gap: 5px;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 10px;
         }
 
         article {
@@ -33,6 +48,7 @@
             display: flex;
             flex-direction: row;
             justify-content: center;
+            margin: 10px;
 
         }
 
@@ -41,6 +57,7 @@
             margin: 3px;
             border: none;
             text-align: center;
+            cursor: pointer;
 
         }
 
@@ -54,13 +71,58 @@
             color: white;
         }
 
-        .data_con {}
+        .data_con {
+            justify-content: space-between;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-gap: 5px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        h3 {
+            text-align: center;
+        }
+
+        .pris {
+            font-weight: bold;
+        }
+
+        #popup {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, .5);
+
+        }
+
+        #retter_popup {
+            margin: 3em;
+            padding: 2em;
+            background-color: white;
+        }
+
+        .hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
     </style>
 </head>
 
 
 <body>
 
+    <div class="banner_con">
+        <div class="banner_img">
+            <div class="banner_txt">
+                <h1>Bistro Babushka</h1>
+                <p>God mad til gode priser</p>
+            </div>
+        </div>
+    </div>
 
     <header>
         <nav>
@@ -72,7 +134,8 @@
             <button class="filter" data-kategori="sideorders">Sideorders</button>
         </nav>
     </header>
-    <h1>Alle</h1>
+
+    <h3>Alle</h3>
 
     <section class="data_con"></section>
     <template>
@@ -86,6 +149,15 @@
         </article>
     </template>
 
+    <section id="popup" class="hide">
+        <button>X</button>
+        <article id="retter_popup">
+            <h2>Hello</h2>
+            <img src="">
+            <p>Her er mad</p>
+        </article>
+    </section>
+
     <script>
         document.addEventListener("DOMContentLoaded", start);
 
@@ -93,6 +165,7 @@
         let filter = "alle";
 
         const data_con = document.querySelector(".data_con");
+        const detalje = document.querySelector("#popup");
 
         const endPoint = ("https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json");
 
@@ -127,6 +200,11 @@
                     klon.querySelector("h2").textContent = `${ret.gsx$navn.$t}`;
                     klon.querySelector(".kort").textContent = `${ret.gsx$kort.$t}`;
                     klon.querySelector(".pris").textContent = `${ret.gsx$pris.$t},-`;
+
+                    klon.querySelector("article").addEventListener("click", function() {
+                        visDetalje(ret)
+                    });
+
                     klon.querySelector("img").src = `imgs/small/${ret.gsx$billede.$t}-sm.jpg`;
 
 
@@ -154,7 +232,18 @@
 
             this.classList.add("button_active");
 
-            document.querySelector("h1").textContent = this.textContent;
+            document.querySelector("h3").textContent = this.textContent;
         }
+
+        function visDetalje() {
+            console.log('visDetalje');
+
+            detalje.classList.remove("hide");
+            detalje.querySelector("button").addEventListener("click", () => detalje.classList.add("hide"));
+
+        }
+
     </script>
-</body></html>
+</body>
+
+</html>
