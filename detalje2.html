@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Odibee+Sans&display=swap" rel="stylesheet">
+
+    <title>Babushka</title>
+
+
+
+
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .banner_img {
+            width: 100%;
+            height: 250px;
+            background-image: url(imgs/large/borsjtj.jpg);
+            background-size: cover;
+
+        }
+
+        .banner_con {
+            width: 100%;
+            height: 250px;
+        }
+
+        .banner_txt {
+
+            text-align: center;
+            color: white;
+            font-weight: thin;
+            margin: 0 auto;
+
+        }
+
+        .banner_txt h1 {
+            margin: 0 auto;
+            font-family: 'Odibee Sans', cursive;
+            font-size: 7rem;
+            letter-spacing: 7px;
+        }
+
+
+        img {
+            max-width: 100%;
+        }
+
+        #detalje {
+
+
+            width: 100vw;
+            display: grid;
+            grid-row-gap: 50px;
+            /*            grid-template-columns: auto auto auto;*/
+
+            padding: 10px;
+
+        }
+
+        #detalje #luk {
+            position: fixed;
+            cursor: pointer;
+            background: none;
+            border: none;
+
+        }
+
+        i {
+            border: solid black;
+            border-width: 0 3px 3px 0;
+            display: inline-block;
+            padding: 3px;
+        }
+
+        .left {
+            transform: rotate(135deg);
+            -webkit-transform: rotate(135deg);
+        }
+
+        #detalje .ret {
+            width: 60vw;
+            min-height: 50vh;
+            margin: auto;
+            padding: 25px 0 0 0;
+            background: white;
+        }
+
+        p {
+            margin: 10px 0 0 5px;
+        }
+
+        button {
+
+            border: none;
+            text-align: center;
+            cursor: pointer;
+
+        }
+
+        .pris {
+            font-weight: bold;
+        }
+
+        .ret_con {
+            display: grid;
+            grid-template-columns: auto auto;
+            align-items: center;
+            grid-gap: 25px;
+            margin: 0 auto;
+
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+    <div class="banner_con">
+        <div class="banner_img">
+            <div class="banner_txt">
+                <h1>Bistro Babushka</h1>
+                <p>God mad til gode priser</p>
+            </div>
+        </div>
+    </div>
+
+
+    <section id="detalje" class="skjul">
+        <button id="luk">
+            <i class="arrow left"></i>
+        </button>
+        <article class="ret">
+            <div class="ret_con">
+                <img src="" alt="">
+                <div>
+                    <h2></h2>
+                    <p class="oprindelse"></p>
+                    <p class="lang"></p>
+                    <p class="pris"></p>
+                </div>
+            </div>
+        </article>
+    </section>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", start);
+
+        const urlParams = new URLSearchParams(window.location.search)
+        const id = urlParams.get("id");
+        console.log(id);
+
+        let retter = [];
+
+
+
+        const detalje = document.querySelector("#detalje");
+
+        const endPoint = ("https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json");
+
+        function start() {
+            loadData();
+        }
+
+        async function loadData() {
+            const response = await fetch(endPoint);
+            retter = await response.json();
+            console.log(retter);
+
+            visRetter();
+
+        }
+
+
+        function visRetter() {
+            console.log('visRetter');
+
+
+            retter.feed.entry.forEach(ret => {
+                if (ret.gsx$id.$t == id) {
+
+
+                    detalje.querySelector("h2").textContent = `${ret.gsx$navn.$t}`;
+                    detalje.querySelector(".lang").textContent = `${ret.gsx$lang.$t}`;
+                    detalje.querySelector(".pris").textContent = `${ret.gsx$pris.$t},-`;
+                    detalje.querySelector("img").src = `imgs/large/${ret.gsx$billede.$t}.jpg`;
+
+                }
+            });
+
+
+            document.querySelector("button").addEventListener("click", (skjulDetalje));
+            console.log("click");
+
+        }
+
+        function skjulDetalje() {
+            history.back();
+        }
+
+    </script>
+</body>
+
+</html>

@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Babushka</title>
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Odibee+Sans&display=swap" rel="stylesheet">
+
+    <title>Babushka</title>
     <style>
         * {
             box-sizing: border-box;
@@ -40,8 +40,6 @@
 
         .banner_txt h1 {
             margin: 0 auto;
-            font-family: 'Odibee Sans', cursive;
-            font-size: 5rem;
         }
 
         img {
@@ -49,7 +47,7 @@
         }
 
         article {
-            padding-top: 10px;
+            padding: 10px;
         }
 
         h1,
@@ -84,7 +82,7 @@
             justify-content: space-between;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            grid-gap: 25px;
+            grid-gap: 5px;
             max-width: 1000px;
             margin: 0 auto;
             padding: 10px;
@@ -94,68 +92,19 @@
             text-align: center;
         }
 
-        h2 {
-            font-size: 1rem;
-
-
-        }
-
         .pris {
             font-weight: bold;
-        }
-
-        #popup {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, .5);
-            overflow: scroll;
-
-        }
-
-        #retter_popup {
-            margin: 3em;
-            padding: 2em;
-            background-color: white;
-        }
-
-        #popup button {
-            top: 0;
-            left: 0;
-            position: fixed;
-        }
-
-        .hide {
-            opacity: 0;
-            pointer-events: none;
         }
 
         p {
             margin: 10px 0 0 5px;
         }
 
-        .card {
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-            transition: 0.3s;
-            width: 100%;
-            margin: 10px;
-
-        }
-
-        .card:hover {
-            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .container {
-            padding: 2px 16px;
-        }
-
     </style>
 </head>
 
-
 <body>
+
 
     <div class="banner_con">
         <div class="banner_img">
@@ -180,29 +129,19 @@
     <h3>Alle</h3>
 
     <section class="data_con"></section>
+
     <template>
-        <article id="retter" class="card">
-            <div class="container">
-                <img src="" alt="">
-                <h2></h2>
-                <p class="navn"></p>
-                <p class="kort"></p>
-                <p class="pris"></p>
-            </div>
-        </article>
-    </template>
-
-    <section id="popup" class="hide">
-
-        <article id="retter_popup">
-            <button>X</button>
+        <article id="retter">
             <img src="" alt="">
             <h2></h2>
             <p class="navn"></p>
-            <p class="lang"></p>
+            <p class="kort"></p>
             <p class="pris"></p>
+
         </article>
-    </section>
+    </template>
+
+
 
     <script>
         document.addEventListener("DOMContentLoaded", start);
@@ -211,14 +150,14 @@
         let filter = "alle";
 
         const data_con = document.querySelector(".data_con");
-        const detalje = document.querySelector("#popup");
+
 
         const endPoint = ("https://spreadsheets.google.com/feeds/list/17Dd7DvkPaFamNUdUKlrFgnH6POvBJXac7qyiS6zNRw0/od6/public/values?alt=json");
 
         function start() {
             loadData();
 
-            addEventListenersToButtons();
+            addEventlistenersToButtons();
         }
 
         async function loadData() {
@@ -228,50 +167,48 @@
 
             visRetter();
 
-
         }
 
+
         function visRetter() {
+
+            // .content måske slettes sidst i sætningen????
+
+            const retTemplate = document.querySelector("template").content;
+
             data_con.innerHTML = "";
 
-
-            const retTemplate = document.querySelector("template");
-
             retter.feed.entry.forEach(ret => {
-                if (filter == "alle" || filter == ret.gsx$kategori.$t) {
-                    const klon = retTemplate.cloneNode(true).content;
-
-                    //                    let klon = personTemplate.cloneNode(true).content;
+                if (ret.gsx$id.$t == filter || filter == "alle") {
+                    const klon = retTemplate.cloneNode(true);
 
                     klon.querySelector("h2").textContent = `${ret.gsx$navn.$t}`;
-                    klon.querySelector(".kort").textContent = `${ret.gsx$kort.$t}`;
+                    klon.querySelector(".kort").textContent = `${ret.gsx$lang.$t}`;
                     klon.querySelector(".pris").textContent = `${ret.gsx$pris.$t},-`;
-
-                    klon.querySelector("article").addEventListener("click", function() {
-                        visDetalje(ret)
-                    });
-
-
-
                     klon.querySelector("img").src = `imgs/small/${ret.gsx$billede.$t}-sm.jpg`;
 
 
                     data_con.appendChild(klon);
 
+                    data_con.lastElementChild.addEventListener("click", () => {
+                        location.href = `detalje2.html?id=${ret.gsx$id.$t}`;
+                    });
+
                 }
             })
+
         }
 
-        function addEventListenersToButtons() {
+
+
+        function addEventlistenersToButtons() {
             document.querySelectorAll(".filter").forEach(elm => {
                 elm.addEventListener("click", filtrering);
             })
-
         }
 
-
         function filtrering() {
-            console.log("FITLER");
+            console.log("FILTER");
             document.querySelectorAll(".filter").forEach(elm => {
                 elm.classList.remove("button_active");
             })
@@ -281,21 +218,7 @@
             this.classList.add("button_active");
 
             document.querySelector("h3").textContent = this.textContent;
-        }
 
-        function visDetalje(ret) {
-            console.log('visDetalje');
-
-
-            detalje.classList.remove("hide");
-            detalje.querySelector("button").addEventListener("click", () => detalje.classList.add("hide"));
-
-            detalje.querySelector("h2").textContent = ret.gsx$navn.$t;
-            detalje.querySelector(".lang").textContent = ret.gsx$lang.$t;
-
-            detalje.querySelector(".pris").textContent = `${ret.gsx$pris.$t},-`;
-
-            detalje.querySelector("img").src = `imgs/large/${ret.gsx$billede.$t}.jpg`;
 
         }
 
