@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Odibee+Sans&display=swap" rel="stylesheet">
 
     <title>Babushka</title>
     <style>
@@ -39,24 +40,25 @@
 
 
         .banner_txt h1 {
-            margin: 0 auto;
+            text-align: center;
+            padding-top: 50px;
+            font-family: 'Odibee Sans', cursive;
+            font-size: 7rem;
+            letter-spacing: 7px;
+            font-weight: 100;
+            color: white;
+
         }
 
         img {
             max-width: 100%;
         }
 
-        article {
-            padding: 10px;
-        }
-
-        h1,
-        nav {
+        .kategori {
             display: flex;
             flex-direction: row;
             justify-content: center;
-            margin: 10px;
-
+            margin: 60px 0 10px 0;
         }
 
         button {
@@ -65,24 +67,23 @@
             border: none;
             text-align: center;
             cursor: pointer;
+            background: none;
 
         }
 
         button:hover {
-            background-color: black;
-            color: white;
+            border-bottom: solid 1px black;
         }
 
         .button_active {
-            background-color: black;
-            color: white;
+            border-bottom: solid 1px black;
         }
 
         .data_con {
             justify-content: space-between;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            grid-gap: 5px;
+            grid-gap: 25px;
             max-width: 1000px;
             margin: 0 auto;
             padding: 10px;
@@ -90,48 +91,101 @@
 
         h3 {
             text-align: center;
+            text-transform: uppercase;
+            font-size: 2rem;
+            font-family: 'Odibee Sans', cursive;
+            margin: 30px 0 30px 0;
+        }
+
+        h2 {
+            font-size: 1rem;
+            margin: 5px 0 0 5px;
+            text-transform: uppercase;
         }
 
         .pris {
             font-weight: bold;
+            padding-top: 15px;
         }
 
         p {
-            margin: 10px 0 0 5px;
+            margin: 10px 2px 5px 5px;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            width: 100%;
+
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        #navbar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #333;
+            width: 100%;
+            position: fixed;
+            transition: top 0.3s;
+        }
+
+        #navbar a {
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 15px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        #navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        #retter {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #retter .pris {
+            display: flex;
+            justify-content: flex-end;
         }
 
     </style>
 </head>
 
 <body>
+    <nav id="navbar">
+        <a href="index.html">Babushka</a>
+        <a href="singleview.html">Singleview</a>
+        <a href="popup.html">Popup</a>
+    </nav>
 
 
-    <div class="banner_con">
-        <div class="banner_img">
-            <div class="banner_txt">
-                <h1>Bistro Babushka</h1>
-                <p>God mad til gode priser</p>
-            </div>
-        </div>
+    <div class="kategori">
+
+        <button class="filter button_active" data-kategori="alle">Alle</button>
+        <button class="filter" data-kategori="forretter">Forretter</button>
+        <button class="filter" data-kategori="hovedretter">Hovedretter</button>
+        <button class="filter" data-kategori="desserter">Desserter</button>
+        <button class="filter" data-kategori="drikkevarer">Drikkevarer</button>
+        <button class="filter" data-kategori="sideorders">Sideorders</button>
+
     </div>
-
-    <header>
-        <nav>
-            <button class="filter button_active" data-kategori="alle">Alle</button>
-            <button class="filter" data-kategori="forretter">Forretter</button>
-            <button class="filter" data-kategori="hovedretter">Hovedretter</button>
-            <button class="filter" data-kategori="desserter">Desserter</button>
-            <button class="filter" data-kategori="drikkevarer">Drikkevarer</button>
-            <button class="filter" data-kategori="sideorders">Sideorders</button>
-        </nav>
-    </header>
 
     <h3>Alle</h3>
 
     <section class="data_con"></section>
 
     <template>
-        <article id="retter">
+        <article id="retter" class="card">
             <img src="" alt="">
             <h2></h2>
             <p class="navn"></p>
@@ -145,6 +199,8 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", start);
+
+
 
         let retter = [];
         let filter = "alle";
@@ -179,12 +235,12 @@
             data_con.innerHTML = "";
 
             retter.feed.entry.forEach(ret => {
-                if (ret.gsx$id.$t == filter || filter == "alle") {
+                if (ret.gsx$kategori.$t == filter || filter == "alle") {
                     const klon = retTemplate.cloneNode(true);
 
                     klon.querySelector("h2").textContent = `${ret.gsx$navn.$t}`;
-                    klon.querySelector(".kort").textContent = `${ret.gsx$lang.$t}`;
-                    klon.querySelector(".pris").textContent = `${ret.gsx$pris.$t},-`;
+                    klon.querySelector(".kort").textContent = `${ret.gsx$kort.$t}`;
+                    klon.querySelector(".pris").textContent = ` ${ret.gsx$pris.$t},-`;
                     klon.querySelector("img").src = `imgs/small/${ret.gsx$billede.$t}-sm.jpg`;
 
 
